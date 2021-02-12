@@ -29,11 +29,13 @@ package be.tarsos.dsp.pitch;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.fff.ccgt.BuildConfig;
+
 /**
  * <p>
  * Implementation of The McLeod Pitch Method (MPM). It is described in the
  * article <a href=
- * "http://miracle.otago.ac.nz/tartini/papers/A_Smarter_Way_to_Find_Pitch.pdf"
+ * "http://miracle.otago.ac.nz/postgrads/tartini/papers/A_Smarter_Way_to_Find_Pitch.pdf"
  * >A Smarter Way to Find Pitch</a>. According to the article:
  * </p>
  * <blockquote> <bufferCount>
@@ -223,7 +225,7 @@ public final class McLeodPitchMethod implements PitchDetector {
 
 			if (nsdf[tau] > SMALL_CUTOFF) {
 				// calculates turningPointX and Y
-				parabolicInterpolation(tau);
+				prabolicInterpolation(tau);
 				// store the turning points
 				ampEstimates.add(turningPointY);
 				periodEstimates.add(turningPointX);
@@ -300,7 +302,7 @@ public final class McLeodPitchMethod implements PitchDetector {
 	 * @param tau
 	 *            The delay tau, b value in the drawing is the tau value.
 	 */
-	private void parabolicInterpolation(final int tau) {
+	private void prabolicInterpolation(final int tau) {
 		final float nsdfa = nsdf[tau - 1];
 		final float nsdfb = nsdf[tau];
 		final float nsdfc = nsdf[tau + 1];
@@ -367,7 +369,10 @@ public final class McLeodPitchMethod implements PitchDetector {
 		}
 
 		while (pos < nsdf.length - 1) {
-			assert nsdf[pos] >= 0;
+			//some androids don't like assert statement :-(((
+			if (BuildConfig.DEBUG && nsdf[pos] < 0) {
+				throw new AssertionError("Assertion failed");
+			}
 			if (nsdf[pos] > nsdf[pos - 1] && nsdf[pos] >= nsdf[pos + 1]) {
 				if (curMaxPos == 0) {
 					// the first max (between zero crossings)
