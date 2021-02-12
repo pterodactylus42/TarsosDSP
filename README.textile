@@ -174,3 +174,5 @@ The 2.3 version includes improved Android support: "audio decoding on Android":h
 Some small changes to the pipe decoder. Now it is possible to set a start and duration for the incoming decoded audio from ffmpeg. 
 
  
+<dt>Version 2.4</dt><dd>2021-02-12</dd>
+Some androids don't like assert statements. Made McLeodPitchMethod android specific due to crashes of mpm method.
