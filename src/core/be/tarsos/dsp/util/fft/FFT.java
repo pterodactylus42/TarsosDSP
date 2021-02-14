@@ -25,6 +25,8 @@
 package be.tarsos.dsp.util.fft;
 
 
+import de.fff.ccgt.BuildConfig;
+
 /**
  * Wrapper for calling a hopefully Fast Fourier transform. Makes it easy to
  * switch FFT algorithm with minimal overhead.
@@ -32,7 +34,7 @@ package be.tarsos.dsp.util.fft;
  * 
  * @author Joren Six
  */
-public class FFT {
+public final class FFT {
 
 	/**
 	 * Forward FFT.
@@ -138,7 +140,10 @@ public class FFT {
 	 *            The output modulus info or amplitude.
 	 */
 	public void modulus(final float[] data, final float[] amplitudes) {
-		assert data.length / 2 == amplitudes.length;
+		//another assertion less....
+		if (BuildConfig.DEBUG && data.length / 2 != amplitudes.length) {
+			throw new AssertionError("Assertion failed");
+		}
 		for (int i = 0; i < amplitudes.length; i++) {
 			amplitudes[i] = modulus(data, i);
 		}
@@ -157,9 +162,13 @@ public class FFT {
 	 *            The phase of the data
 	 */
 	public void powerPhaseFFT(float[] data,float[] power, float[] phase) {
-		assert data.length / 2 == power.length;
-		assert data.length / 2 == phase.length;
-		if(windowFunction!=null){
+		if (BuildConfig.DEBUG && data.length / 2 != power.length) {
+			throw new AssertionError("Assertion failed");
+		}
+		if (BuildConfig.DEBUG && data.length / 2 != phase.length) {
+			throw new AssertionError("Assertion failed");
+		}
+		if (windowFunction != null) {
 			windowFunction.apply(data);
 		}
 		fft.realForward(data);
@@ -196,12 +205,14 @@ public class FFT {
 	 * @param other The array with imaginary numbers that is not modified.
 	 * Data and other need to be the same length.
 	 */
-	public void multiply(float[] data, float[] other){
-		assert data.length == other.length;
-		if(data.length!=other.length){
+	public void multiply(float[] data, float[] other) {
+		if (BuildConfig.DEBUG && data.length != other.length) {
+			throw new AssertionError("Assertion failed");
+		}
+		if (data.length != other.length) {
 			throw new IllegalArgumentException("Both arrays with imaginary numbers shouldb e of equal length");
 		}
-		for (int i = 1; i < data.length-1; i+=2) {
+		for (int i = 1; i < data.length - 1; i += 2) {
 			int realIndex = i;
 			int imgIndex = i + 1;
 			float tempReal = data[realIndex] * other[realIndex] + -1 * data[imgIndex] * other[imgIndex];
@@ -211,6 +222,6 @@ public class FFT {
 			//fix by perfecthu 
 			//data[realIndex] = data[realIndex] * other[realIndex] + -1 * data[imgIndex] * other[imgIndex];
 			//data[imgIndex] = data[realIndex] * other[imgIndex] + data[imgIndex] * other[realIndex];
-			}
+		}
 	}
 }
